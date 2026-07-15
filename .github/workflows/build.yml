@@ -2,8 +2,10 @@ name: build
 
 on:
   push:
-    branches: [main]
-  workflow_dispatch: {}
+    branches:
+      - main
+      - task2-cicd
+  workflow_dispatch:
 
 permissions:
   contents: read
