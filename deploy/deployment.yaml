@@ -89,6 +89,7 @@ spec:
             failureThreshold: 3
 
           securityContext:
+            privileged: false
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
