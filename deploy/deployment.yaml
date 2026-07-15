@@ -5,24 +5,102 @@ metadata:
   namespace: payments
   labels:
     app: ledger-api
+
 spec:
   replicas: 3
+
   selector:
     matchLabels:
       app: ledger-api
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+
   template:
     metadata:
       labels:
         app: ledger-api
+
     spec:
+      serviceAccountName: ledger-api-sa
+
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 995
+        fsGroup: 995
+        seccompProfile:
+          type: RuntimeDefault
+
       containers:
         - name: ledger-api
-          image: ledger-api:starter
-          imagePullPolicy: IfNotPresent
-          env:
-            - name: STRIPE_API_KEY
-              value: "sk_live_9f3a2b7c1e4d8REDACTED"
-            - name: DB_PASSWORD
-              value: "P@ssw0rd123"
+          image: ghcr.io/adityamandourney17/ledger-api:latest
+          imagePullPolicy: Always
+
           ports:
             - containerPort: 8080
+
+          env:
+            - name: STRIPE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ledger-api-secret
+                  key: STRIPE_API_KEY
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ledger-api-secret
+                  key: DB_PASSWORD
+
+          envFrom:
+            - configMapRef:
+                name: ledger-api-config
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+
+      volumes:
+        - name: tmp
+          emptyDir: {}
