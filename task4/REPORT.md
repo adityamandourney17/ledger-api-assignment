@@ -2,18 +2,24 @@
 
 ## Target
 
-- Domain: `dodopayments.tech`
+**Domain:** `dodopayments.tech`
 
 ---
 
-# Methodology
+## Objective
 
-The reconnaissance was performed using passive enumeration techniques without exploiting or interacting aggressively with the target.
+Perform passive reconnaissance to identify publicly exposed assets, discover live services, fingerprint technologies, and review SSL/TLS configuration.
 
-The following steps were performed:
+---
+
+## Methodology
+
+The assessment was performed using passive reconnaissance techniques without exploiting or interacting aggressively with the target.
+
+The following activities were completed:
 
 1. Subdomain Enumeration
-2. Asset Enumeration
+2. Asset Discovery
 3. Passive DNS Enumeration
 4. Live Host Discovery
 5. Technology Fingerprinting
@@ -21,7 +27,7 @@ The following steps were performed:
 
 ---
 
-# Tools Used
+## Tools Used
 
 | Tool | Purpose |
 |------|---------|
@@ -34,13 +40,13 @@ The following steps were performed:
 
 ---
 
-# Key Findings
+# Findings
 
 ## 1. Subdomain Enumeration
 
-Subdomains were collected using multiple tools and merged into a single deduplicated list.
+Subdomains were collected using multiple passive enumeration tools and merged into a single deduplicated list.
 
-Results are available in:
+Outputs:
 
 - recon/subfinder.txt
 - recon/assetfinder.txt
@@ -53,9 +59,7 @@ Results are available in:
 
 Live HTTP/HTTPS services were identified using Httpx.
 
-Several publicly accessible services were discovered.
-
-Results:
+Outputs:
 
 - recon/live-hosts.txt
 
@@ -63,19 +67,17 @@ Results:
 
 ## 3. Technology Fingerprinting
 
-The target is protected by Cloudflare.
-
 Detected technologies include:
 
 - Cloudflare
 - Astro
-- HSTS
 - Next.js
 - React
-- Vercel (for some subdomains)
+- HSTS
+- Vercel
+- Google Analytics
 - Plunk
 - SonarQube
-- Google Analytics
 
 Output:
 
@@ -83,29 +85,25 @@ Output:
 
 ---
 
-## 4. SSL/TLS Analysis
+## 4. SSL/TLS Assessment
 
-SSL/TLS testing was performed using testssl.sh.
+SSL/TLS configuration was evaluated using testssl.sh.
 
-### Summary
-
-Supported:
+### Supported Protocols
 
 - TLS 1.2
 - TLS 1.3
 
-Legacy Protocols:
+### Legacy Protocols
 
 - TLS 1.0 (Enabled)
 - TLS 1.1 (Enabled)
 
-Overall Rating:
+### Overall Rating
 
-**Grade B**
+**Grade: B**
 
-Reason:
-
-Legacy TLS versions are still enabled.
+The rating is limited because legacy TLS 1.0 and TLS 1.1 are still enabled.
 
 Output:
 
@@ -115,25 +113,26 @@ Output:
 
 # Security Observations
 
-Positive Findings
+## Positive Findings
 
-- Modern TLS 1.3 support
+- TLS 1.3 supported
 - Forward Secrecy enabled
 - Strong cipher suites
-- Valid certificates
-- Cloudflare protection
+- Valid SSL certificates
+- Cloudflare protection detected
 
-Potential Improvements
+## Recommendations
 
 - Disable TLS 1.0
 - Disable TLS 1.1
-- Improve SSL rating from B to A
+- Restrict weak cipher suites where applicable
+- Improve SSL configuration to achieve an **A** rating
 
 ---
 
 # Evidence
 
-Execution screenshots for every stage are included in:
+Evidence for each stage of the assessment is available under:
 
 ```
 task4/screenshots/
@@ -143,6 +142,6 @@ task4/screenshots/
 
 # Conclusion
 
-The passive reconnaissance successfully identified the target's exposed attack surface, live services, technologies in use, and SSL/TLS configuration.
+The passive reconnaissance successfully identified publicly exposed assets, active services, web technologies, and the SSL/TLS posture of the target domain.
 
-All evidence, command outputs, and screenshots have been included as part of this submission.
+All command outputs, screenshots, and supporting evidence have been included as part of this submission.
